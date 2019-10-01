@@ -34,11 +34,36 @@ aws iam create-user --user-name kops
 ```bash
 aws iam add-user-to-group --user-name kops --group-name kops
 ```
-4. Create Key Pair to be used to connect to the K8s instances
+
+### Create Access Key for kops user
+1. Create Access Key and Secret Access Key
 ```bash
 aws iam create-access-key --user-name kops >kops-creds
 cat kops-creds
 ```
+2. Export **kops** Access Key
+```bash
+export AWS_ACCESS_KEY_ID=$(cat kops-creds | jq -r '.AccessKey.AccessKeyId')
+```
+3. Export **kops** Secret Access Key
+```bash
+export AWS_SECRET_ACCESS_KEY=$(cat kops-creds | jq -r '.AccessKey.SecretAccessKey')
+```
+
+### Choosing Availability Zones
+1. Get the list of all AZ's in our previously defined "Default Region"
+```bash
+aws ec2 describe-availability-zones --region $AWS_DEFAULT_REGION
+```
+2. Export the list of all zones, as a list:  
+##### If Windows, use `'\r'` instead `'\n'`
+```bash
+export ZONES=$(aws ec2 describe-availability-zones --region $AWS_DEFAULT_REGION | jq -r '.AvailabilityZones[].ZoneName' | tr '\n' ',' | tr -d ' ')
+ZONES=${ZONES%?}
+echo $ZONES
+```
+
+
 
 
 
