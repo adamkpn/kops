@@ -63,6 +63,18 @@ ZONES=${ZONES%?}
 echo $ZONES
 ```
 
+### Generating SSH keys
+1. Create a new folder for the new cluster:
+```bash
+mkdir -p cluster
+cd cluster
+```
+2. Create a new Key Pair
+```bash
+aws ec2 create-key-pair --key-name kops | jq -r '.KeyMaterial' >kops.pem
+chmod 400 kops.pem
+ssh-keygen -y -f kops.pem >kops.pub
+```
 
 
 
