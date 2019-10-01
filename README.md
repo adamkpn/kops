@@ -1,2 +1,2 @@
 ## Prerequisites:
-git [git-scm][(https://git-scm.com/)
+git:  [git-scm](https://git-scm.com/)
