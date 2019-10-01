@@ -76,6 +76,39 @@ chmod 400 kops.pem
 ssh-keygen -y -f kops.pem >kops.pub
 ```
 
+### Create a Store for our Kops cluster
+1. Export the name for our K8s cluster:
+```bash
+export NAME=kops.k8s.local
+```
+2. Export the S3 bucket name and then create the bucket in a default region we have defined in a one of the previous steps:
+```bash
+export BUCKET_NAME=kops-$(date +%s)
+aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=$AWS_DEFAULT_REGION
+```
+3. Export the "KOPS_STATE_STORE" env. variable:
+```bash
+export KOPS_STATE_STORE=s3://$BUCKET_NAME
+```
+### Create a Cluster
+1. Create a Kops cluster
+```bash
+kops create cluster --name $NAME --master-count 3 --node-count 1 \
+    --node-size t2.small --master-size t2.small --zones $ZONES \
+    --master-zones $ZONES --ssh-public-key kops.pub \
+    --networking kubenet --kubernetes-version v1.8.4 --yes
+```
+
+### Get the new Cluster details:
+1. Get the cluster details:
+```bash
+kops get cluster
+kubectl cluster-info
+kops validate cluster
+```
+
+
+
 
 
 
